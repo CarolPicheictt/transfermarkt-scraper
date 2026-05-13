@@ -120,6 +120,41 @@ O scraper suporta vários filtros para personalizar a coleta de dados:
   python -m tfmkt games scrape --competition world_cup --start-date 2022-11-20 --end-date 2022-12-18
   ```
 
+#### Exemplo Avançado: Scrapear Múltiplas Competições com Filtros de Tempo
+
+Para obter todas as informações disponíveis (jogos, competições, jogadores, etc.) de uma lista específica de competições em um intervalo de tempo definido, siga estes passos:
+
+1. **Liste as competições disponíveis** para escolher as desejadas:
+   ```
+   python -m tfmkt competitions list
+   ```
+
+2. **Defina a lista de competições** (ex: Copa América, Africa Cup, UEFA Euro) e o período (ex: 2023-01-01 a 2023-12-31).
+
+3. **Execute o scraper para cada competição** com filtros de data:
+   ```
+   # Scrapear Copa América 2023
+   python -m tfmkt games scrape --competition copa_america --season 2023 --start-date 2023-01-01 --end-date 2023-12-31 --output copa_america_2023.json
+
+   # Scrapear Africa Cup of Nations 2023
+   python -m tfmkt games scrape --competition africa_cup_of_nations --season 2023 --start-date 2023-01-01 --end-date 2023-12-31 --output africa_cup_2023.json
+
+   # Scrapear UEFA Euro 2023 (se disponível)
+   python -m tfmkt games scrape --competition uefa_euro --season 2023 --start-date 2023-01-01 --end-date 2023-12-31 --output uefa_euro_2023.json
+   ```
+
+4. **Para obter dados de competições (não apenas jogos)**:
+   ```
+   python -m tfmkt competitions scrape --competition copa_america --season 2023 --output competitions.json
+   ```
+
+5. **Agregue todos os dados coletados** em um único arquivo usando `aggregate_games.py`:
+   ```
+   python aggregate_games.py --dir ./data --output all_competitions_2023.csv
+   ```
+
+Este processo coleta todas as tabelas de dados disponíveis (jogos com eventos, jogadores, placares, datas, etc.) para as competições especificadas no intervalo de tempo. Se precisar automatizar para múltiplas competições, considere criar um script bash ou Python para loopar os comandos.
+
 ### 2. Agregar Dados com aggregate_games.py
 
 Após scrapear os dados, use o script `aggregate_games.py` para combinar múltiplos arquivos JSON em um único DataFrame e exportar para CSV ou JSON.

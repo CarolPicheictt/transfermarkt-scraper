@@ -49,6 +49,17 @@ def normalize_text(value):
     return re.sub(r"\s+", " ", text)
 
 
+def clean_team_name(name):
+    if name is None:
+        return None
+
+    # Remove sufixos comuns como U20, U21, etc.
+    name = re.sub(r'\s+U\d+', '', str(name).strip())
+    # Remove outros sufixos se necessário, ex: (A), (B), etc.
+    name = re.sub(r'\s+\([A-Z]\)', '', name)
+    return name
+
+
 def parse_match_score(score):
     if score is None:
         return None, None
@@ -62,8 +73,8 @@ def parse_match_score(score):
 def build_match_key(date_value, home_team, away_team, home_score, away_score):
     return (
         normalize_text(date_value),
-        normalize_text(home_team),
-        normalize_text(away_team),
+        normalize_text(clean_team_name(home_team)),
+        normalize_text(clean_team_name(away_team)),
         f"{home_score}:{away_score}" if home_score is not None and away_score is not None else None,
     )
 

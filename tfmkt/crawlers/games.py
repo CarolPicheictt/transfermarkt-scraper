@@ -109,6 +109,29 @@ async def run(parents_arg=None, season=2024, base_url=None):
                     user_data={'base': cb_data},
                 )
             ])
+        else:
+            # Some competitions expose the fixture list directly on the current
+            # competition page instead of via a separate gesamtspielplan link.
+            game_links = sel.css('a.ergebnis-link')
+            if not game_links:
+                game_links = sel.xpath('//a[contains(@href, "/spielbericht/")]')
+            if game_links:
+                new_requests = []
+                for game_link in game_links:
+                    href = game_link.xpath('@href').get()
+                    cb_data = {
+                        'parent': parent,
+                        'href': href,
+                    }
+                    new_requests.append(
+                        Request.from_url(
+                            url=base_url + href,
+                            label='parse_game',
+                            user_data={'base': cb_data},
+                        )
+                    )
+                if new_requests:
+                    await context.add_requests(new_requests)
 
     @crawler.router.handler('extract_game_urls')
     async def extract_game_urls_handler(context) -> None:
